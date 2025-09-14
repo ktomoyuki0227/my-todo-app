@@ -39,11 +39,16 @@ npm install
 ### 3. 環境変数の設定
 `.env.local`ファイルを作成：
 ```env
+# Supabase設定
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+
+# アプリケーション設定
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
+
+> **注意**: Supabaseの認証情報は、Supabaseダッシュボードの「Settings」→「API」から取得できます。
 
 ### 4. 開発サーバーの起動
 ```bash
@@ -88,6 +93,23 @@ my-todo-app/
 ## 📚 詳細なセットアップガイド
 
 詳細なセットアップ手順については、[SETUP.md](./SETUP.md)を参照してください。
+
+### クイックスタート
+```bash
+# リポジトリをクローン
+git clone https://github.com/ktomoyuki0227/my-todo-app.git
+cd my-todo-app
+
+# 依存関係をインストール
+npm install
+
+# 環境変数を設定（.env.localファイルを作成）
+cp .env.example .env.local
+# .env.localファイルを編集してSupabaseの認証情報を設定
+
+# 開発サーバーを起動
+npm run dev
+```
 
 ## 🚀 デプロイ
 
