@@ -26,7 +26,7 @@ Next.js 15 + Supabase + TypeScript + Tailwind CSS を使用したモダンなToD
 
 ### 1. リポジトリのクローン
 ```bash
-git clone <repository-url>
+git clone https://github.com/ktomoyuki0227/my-todo-app.git
 cd my-todo-app
 npm install
 ```
