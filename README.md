@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ToDoアプリ
 
-## Getting Started
+Next.js 15 + Supabase + TypeScript + Tailwind CSS を使用したモダンなToDoアプリケーションです。
 
-First, run the development server:
+## 🚀 技術スタック
 
+- **フロントエンド**: Next.js 15 (App Router), React 19, TypeScript
+- **スタイリング**: Tailwind CSS 4
+- **バックエンド**: Supabase (認証、PostgreSQL、RLS)
+- **状態管理**: TanStack Query (React Query)
+- **フォーム**: React Hook Form + Zod
+- **UI コンポーネント**: shadcn/ui, Radix UI
+- **アイコン**: Lucide React
+
+## ✨ 主な機能
+
+- 🔐 GitHub認証によるログイン
+- ✅ Todoの追加・編集・削除
+- 🎯 優先度設定（高・中・低）
+- 📅 期限日設定
+- 🔍 フィルタリング（すべて・未完了・完了）
+- 📱 レスポンシブデザイン
+- ⚡ リアルタイム更新
+
+## 🛠️ セットアップ
+
+### 1. リポジトリのクローン
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd my-todo-app
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Supabaseプロジェクトの設定
+1. [Supabase](https://supabase.com)でプロジェクトを作成
+2. データベースの設定（詳細は[SETUP.md](./SETUP.md)を参照）
+3. GitHub OAuth設定
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. 環境変数の設定
+`.env.local`ファイルを作成：
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. 開発サーバーの起動
+```bash
+npm run dev
+```
 
-## Learn More
+[http://localhost:3000](http://localhost:3000) でアプリケーションにアクセスできます。
 
-To learn more about Next.js, take a look at the following resources:
+## 📁 プロジェクト構造
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+my-todo-app/
+├── app/                    # Next.js App Router
+│   ├── (auth)/            # 認証関連ページ
+│   ├── (dashboard)/       # ダッシュボードページ
+│   ├── api/               # API ルート
+│   └── globals.css        # グローバルスタイル
+├── components/            # React コンポーネント
+│   ├── ui/               # 再利用可能なUIコンポーネント
+│   ├── TodoForm.tsx      # Todo作成・編集フォーム
+│   ├── TodoItem.tsx      # Todoアイテム表示
+│   └── DashboardHeader.tsx # ダッシュボードヘッダー
+├── hooks/                # カスタムフック
+│   ├── useTodosQuery.ts  # Todoデータ取得
+│   └── useTodosLocal.ts  # ローカル状態管理
+├── lib/                  # ユーティリティ
+│   ├── supabaseClient.ts # Supabaseクライアント
+│   ├── supabaseServer.ts # Supabaseサーバー
+│   ├── auth.ts          # 認証関連
+│   ├── zodSchemas.ts    # バリデーションスキーマ
+│   └── utils.ts         # 共通ユーティリティ
+└── types/               # TypeScript型定義
+    └── db.ts           # データベース型定義
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔧 利用可能なスクリプト
 
-## Deploy on Vercel
+- `npm run dev` - 開発サーバーを起動（Turbopack使用）
+- `npm run build` - プロダクション用ビルド
+- `npm run start` - プロダクションサーバーを起動
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📚 詳細なセットアップガイド
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+詳細なセットアップ手順については、[SETUP.md](./SETUP.md)を参照してください。
+
+## 🚀 デプロイ
+
+### Vercelでのデプロイ
+1. [Vercel](https://vercel.com)にプロジェクトをインポート
+2. 環境変数を設定
+3. 自動デプロイが開始されます
+
+### その他のプラットフォーム
+- Netlify
+- Railway
+- Supabase Edge Functions
+
+## 🤝 コントリビューション
+
+プルリクエストやイシューの報告を歓迎します！
+
+## 📄 ライセンス
+
+このプロジェクトはMITライセンスの下で公開されています。
