@@ -14,7 +14,7 @@ export const todoSchema = z.object({
 
 export const createTodoSchema = z.object({
   title: z.string().min(1, 'タイトルは必須です').max(200, 'タイトルは200文字以内で入力してください'),
-  priority: z.enum(['low', 'normal', 'high']).default('normal'),
+  priority: z.enum(['low', 'normal', 'high']).default('normal').optional(),
   due_date: z.string().optional(),
 })
 
