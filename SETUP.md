@@ -83,7 +83,7 @@ using (auth.uid() = user_id);
 
 ### 3. GitHub OAuth設定
 1. Supabaseの認証設定でGitHubプロバイダを有効化
-2. GitHub OAuth Appを作成（https://github.com/settings/applications/new）
+2. GitHub OAuth Appを作成（https://github.com/settings/apps ）
 3. Callback URLを設定: `https://your-project.supabase.co/auth/v1/callback`
 
 ### 4. 環境変数の設定
