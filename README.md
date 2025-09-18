@@ -37,7 +37,7 @@ npm install
 3. GitHub OAuth設定
 
 ### 3. 環境変数の設定
-`.env.local`ファイルを作成：
+`.env`ファイルを作成：
 ```env
 # Supabase設定
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
