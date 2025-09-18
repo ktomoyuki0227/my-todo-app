@@ -87,7 +87,7 @@ using (auth.uid() = user_id);
 3. Callback URLを設定: `https://your-project.supabase.co/auth/v1/callback`
 
 ### 4. 環境変数の設定
-`.env`ファイルを作成して以下の内容を設定：
+`.env.local`ファイルを作成して以下の内容を設定：
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
