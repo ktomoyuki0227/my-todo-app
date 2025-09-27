@@ -3,12 +3,15 @@
 import { useState } from 'react'
 import { TodoForm } from '@/components/TodoForm'
 import { TodoItem } from '@/components/TodoItem'
-import { useTodosLocal } from '@/hooks/useTodosLocal'
+import { useTodos, useCreateTodo, useUpdateTodo, useDeleteTodo } from '@/hooks/useTodosQuery'
 import { Button } from '@/components/ui/button'
 import { CreateTodo } from '@/lib/zodSchemas'
 
 function TodosContent() {
-  const { todos, createTodo, updateTodo, deleteTodo } = useTodosLocal()
+  const { data: todos = [], isLoading, error } = useTodos()
+  const createTodoMutation = useCreateTodo()
+  const updateTodoMutation = useUpdateTodo()
+  const deleteTodoMutation = useDeleteTodo()
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all')
 
   const filteredTodos = todos.filter((todo) => {
@@ -23,15 +26,35 @@ function TodosContent() {
   })
 
   const handleCreateTodo = async (data: CreateTodo) => {
-    await createTodo(data)
+    await createTodoMutation.mutateAsync(data)
   }
 
   const handleUpdateTodo = async (id: string, updates: any) => {
-    await updateTodo({ id, ...updates })
+    await updateTodoMutation.mutateAsync({ id, ...updates })
   }
 
   const handleDeleteTodo = async (id: string) => {
-    await deleteTodo(id)
+    await deleteTodoMutation.mutateAsync(id)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="text-center py-12">
+          <div className="text-gray-500">読み込み中...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="text-center py-12">
+          <div className="text-red-500">エラーが発生しました: {error.message}</div>
+        </div>
+      </div>
+    )
   }
 
   return (
