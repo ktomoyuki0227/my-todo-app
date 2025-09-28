@@ -1,11 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Github } from 'lucide-react'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+  const { user, loading } = useAuth()
+
+  useEffect(() => {
+    if (!loading && user) {
+      // 認証済みの場合はtodosページにリダイレクト
+      console.log('User already authenticated, redirecting to todos')
+      router.replace('/todos')
+    }
+  }, [user, loading, router])
 
   const handleSignIn = async () => {
     setIsLoading(true)
@@ -33,28 +45,34 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8">
+      {loading ? (
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            ToDoアプリにサインイン
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            GitHubアカウントでサインインしてください
-          </p>
+          <div className="text-gray-600">認証状態を確認中...</div>
         </div>
-        
-        <div className="mt-8">
-          <Button
-            onClick={handleSignIn}
-            disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2"
-            size="lg"
-          >
-            <Github className="h-5 w-5" />
-            {isLoading ? 'サインイン中...' : 'GitHubでサインイン'}
-          </Button>
+      ) : (
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <h2 className="mt-6 text-3xl font-bold text-gray-900">
+              ToDoアプリにサインイン
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              GitHubアカウントでサインインしてください
+            </p>
+          </div>
+          
+          <div className="mt-8">
+            <Button
+              onClick={handleSignIn}
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-2"
+              size="lg"
+            >
+              <Github className="h-5 w-5" />
+              {isLoading ? 'サインイン中...' : 'GitHubでサインイン'}
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
