@@ -13,8 +13,8 @@ export default function SignInPage() {
   const { user, loading } = useAuth()
 
   useEffect(() => {
+    // 認証済みの場合は todos ページへリダイレクト
     if (!loading && user) {
-      // 認証済みの場合は todos ページへリダイレクト
       console.log('User already authenticated, redirecting to todos')
       router.replace('/todos')
     }
@@ -32,11 +32,11 @@ export default function SignInPage() {
 
       if (error) {
         console.error('Sign in error:', error.message)
+        setIsLoading(false)
       }
       // 成功すると GitHub のログイン画面にリダイレクトされる
     } catch (error) {
       console.error('Sign in exception:', error)
-    } finally {
       setIsLoading(false)
     }
   }

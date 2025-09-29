@@ -18,7 +18,10 @@ export function useAuth() {
           console.error('Error getting session:', error)
           setUser(null)
         } else {
-          setUser(session?.user ?? null)
+          // 初回のみ、セッションが存在する場合にユーザーをセット
+          if (session?.user) {
+            setUser(session.user)
+          }
         }
       } catch (error) {
         console.error('Unexpected error getting session:', error)
@@ -30,11 +33,19 @@ export function useAuth() {
 
     getInitialSession()
 
-    // 認証状態の変更を監視
+    // 認証状態の変更を監視（重複更新を防止）
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email)
-        setUser(session?.user ?? null)
+        
+        // 状態が実際に変更された場合のみ更新
+        if (event === 'SIGNED_IN' && session?.user) {
+          setUser(session.user)
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null)
+        }
+        
+        // ローディング状態を更新
         setLoading(false)
       }
     )
