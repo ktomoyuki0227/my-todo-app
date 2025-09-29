@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Github } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { supabase } from '@/lib/supabaseClient'
 
 export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -13,7 +14,7 @@ export default function SignInPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      // 認証済みの場合はtodosページにリダイレクト
+      // 認証済みの場合は todos ページへリダイレクト
       console.log('User already authenticated, redirecting to todos')
       router.replace('/todos')
     }
@@ -22,22 +23,19 @@ export default function SignInPage() {
   const handleSignIn = async () => {
     setIsLoading(true)
     try {
-      const response = await fetch('/api/auth/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
         },
-        body: JSON.stringify({ provider: 'github' }),
       })
 
-      if (response.ok) {
-        const { url } = await response.json()
-        window.location.href = url
-      } else {
-        console.error('Sign in failed')
+      if (error) {
+        console.error('Sign in error:', error.message)
       }
+      // 成功すると GitHub のログイン画面にリダイレクトされる
     } catch (error) {
-      console.error('Sign in error:', error)
+      console.error('Sign in exception:', error)
     } finally {
       setIsLoading(false)
     }
