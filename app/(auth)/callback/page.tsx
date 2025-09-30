@@ -10,16 +10,21 @@ export default function CallbackPage() {
 
   useEffect(() => {
     const handleAuth = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession()
-      if (error) {
-        console.error('Error getting session:', error)
-        router.replace('/signin')
-      } else if (session) {
-        router.replace('/todos')
-      } else {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        
+        // セッションがある場合は /todos へリダイレクト
+        if (session?.user) {
+          router.replace('/todos')
+        } else {
+          router.replace('/signin')
+        }
+      } catch (error) {
+        console.error('Error handling authentication callback:', error)
         router.replace('/signin')
       }
     }
+
     handleAuth()
   }, [router, supabase])
 

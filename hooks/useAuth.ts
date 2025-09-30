@@ -1,27 +1,27 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { User } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
+  const supabase = createClientComponentClient()
 
   useEffect(() => {
     // 初期認証状態を取得
     const getInitialSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
+        const { data: { session } } = await supabase.auth.getSession()
         
-        if (error) {
-          console.error('Error getting session:', error)
-          setUser(null)
+        // セッションが存在する場合にユーザーをセット
+        if (session?.user) {
+          setUser(session.user)
         } else {
-          // 初回のみ、セッションが存在する場合にユーザーをセット
-          if (session?.user) {
-            setUser(session.user)
-          }
+          setUser(null)
         }
       } catch (error) {
         console.error('Unexpected error getting session:', error)
@@ -41,8 +41,11 @@ export function useAuth() {
         // 状態が実際に変更された場合のみ更新
         if (event === 'SIGNED_IN' && session?.user) {
           setUser(session.user)
+          // サインイン時に /todos にリダイレクト
+          router.replace('/todos')
         } else if (event === 'SIGNED_OUT') {
           setUser(null)
+          router.replace('/signin')
         }
         
         // ローディング状態を更新
@@ -50,8 +53,10 @@ export function useAuth() {
       }
     )
 
-    return () => subscription.unsubscribe()
-  }, [])
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [router, supabase])
 
   return { user, loading }
 }
