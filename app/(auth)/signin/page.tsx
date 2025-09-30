@@ -4,18 +4,18 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Github } from 'lucide-react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabaseClient'
 
 export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { user, loading } = useAuth()
+  const supabase = createClientComponentClient()
 
   useEffect(() => {
     // 認証済みの場合は todos ページへリダイレクト
     if (!loading && user) {
-      console.log('User already authenticated, redirecting to todos')
       router.replace('/todos')
     }
   }, [user, loading, router])
@@ -23,7 +23,7 @@ export default function SignInPage() {
   const handleSignIn = async () => {
     setIsLoading(true)
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
           redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/callback`,
@@ -33,11 +33,14 @@ export default function SignInPage() {
       if (error) {
         console.error('Sign in error:', error.message)
         setIsLoading(false)
+        // エラー時の追加処理（必要に応じて）
+        alert('サインインに失敗しました。もう一度お試しください。')
       }
       // 成功すると GitHub のログイン画面にリダイレクトされる
     } catch (error) {
       console.error('Sign in exception:', error)
       setIsLoading(false)
+      alert('予期せぬエラーが発生しました。')
     }
   }
 

@@ -11,14 +11,28 @@ export default function CallbackPage() {
   useEffect(() => {
     const handleAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
-        
-        // セッションがある場合は /todos へリダイレクト
-        if (session?.user) {
-          router.replace('/todos')
-        } else {
-          router.replace('/signin')
+        // セッションの取得を複数回試行
+        let attempts = 0
+        const maxAttempts = 3
+        let session = null
+
+        while (attempts < maxAttempts) {
+          const { data } = await supabase.auth.getSession()
+          session = data.session
+
+          if (session?.user) {
+            router.replace('/todos')
+            return
+          }
+
+          attempts++
+          // 少し待ってから再試行
+          await new Promise(resolve => setTimeout(resolve, 1000))
         }
+
+        // セッション取得に失敗した場合
+        console.error('Failed to get session after multiple attempts')
+        router.replace('/signin')
       } catch (error) {
         console.error('Error handling authentication callback:', error)
         router.replace('/signin')
