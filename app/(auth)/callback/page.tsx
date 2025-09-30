@@ -2,23 +2,30 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/hooks/useAuth'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-export default function AuthCallbackPage() {
+export default function CallbackPage() {
   const router = useRouter()
-  const { user, loading } = useAuth()
+  const supabase = createClientComponentClient()
 
   useEffect(() => {
-    if (!loading) {
-      if (user) {
-        // 認証に成功している場合は todos へ
+    const handleAuth = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      if (error) {
+        console.error('Error getting session:', error)
+        router.replace('/signin')
+      } else if (session) {
         router.replace('/todos')
       } else {
-        // 認証されていない場合はサインインへ
         router.replace('/signin')
       }
     }
-  }, [user, loading, router])
+    handleAuth()
+  }, [router, supabase])
 
-  return null
+  return (
+    <div className="flex h-screen items-center justify-center">
+      <p>ログイン処理中...</p>
+    </div>
+  )
 }

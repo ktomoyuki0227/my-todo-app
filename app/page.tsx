@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function Home() {
-  const { user, loading } = useAuth()
   const router = useRouter()
+  const { user, loading } = useAuth()
 
   useEffect(() => {
     if (!loading) {
