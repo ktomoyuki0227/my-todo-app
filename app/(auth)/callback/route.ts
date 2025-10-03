@@ -9,12 +9,16 @@ export async function GET(request: NextRequest) {
   const next = requestUrl.searchParams.get('next') ?? '/todos'
 
   if (code) {
-    const supabase = createRouteHandlerClient<Database>({ cookies })
+    const supabase = createRouteHandlerClient<Database>({
+      cookies: async () => cookies(),
+    })
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (error) {
       console.error('OAuth callback error:', error.message)
-      return NextResponse.redirect(new URL('/signin?error=oauth_callback', requestUrl.origin))
+      return NextResponse.redirect(
+        new URL('/signin?error=oauth_callback', requestUrl.origin)
+      )
     }
   } else {
     console.warn('OAuth callback invoked without code parameter')
