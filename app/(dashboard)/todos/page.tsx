@@ -1,11 +1,11 @@
-'use client'
+﻿'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { TodoForm } from '@/components/TodoForm'
 import { TodoItem } from '@/components/TodoItem'
 import { useTodos, useCreateTodo, useUpdateTodo, useDeleteTodo } from '@/hooks/useTodosQuery'
 import { Button } from '@/components/ui/button'
-import { CreateTodo } from '@/lib/zodSchemas'
+import { CreateTodo, UpdateTodo } from '@/lib/zodSchemas'
 
 function TodosContent() {
   const { data: todos = [], isLoading, error } = useTodos()
@@ -14,22 +14,42 @@ function TodosContent() {
   const deleteTodoMutation = useDeleteTodo()
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all')
 
-  const filteredTodos = todos.filter((todo) => {
-    switch (filter) {
-      case 'pending':
-        return !todo.is_done
-      case 'completed':
-        return todo.is_done
-      default:
-        return true
+  const { filteredTodos, counts } = useMemo(() => {
+    let pendingCount = 0
+    let completedCount = 0
+    const filtered: typeof todos = []
+
+    for (const todo of todos) {
+      if (todo.is_done) {
+        completedCount += 1
+      } else {
+        pendingCount += 1
+      }
+
+      if (filter === 'pending' && !todo.is_done) {
+        filtered.push(todo)
+      }
+
+      if (filter === 'completed' && todo.is_done) {
+        filtered.push(todo)
+      }
     }
-  })
+
+    return {
+      filteredTodos: filter === 'all' ? todos : filtered,
+      counts: {
+        total: todos.length,
+        pending: pendingCount,
+        completed: completedCount,
+      },
+    }
+  }, [todos, filter])
 
   const handleCreateTodo = async (data: CreateTodo) => {
     await createTodoMutation.mutateAsync(data)
   }
 
-  const handleUpdateTodo = async (id: string, updates: any) => {
+  const handleUpdateTodo = async (id: string, updates: UpdateTodo) => {
     await updateTodoMutation.mutateAsync({ id, ...updates })
   }
 
@@ -60,12 +80,8 @@ function TodosContent() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          タスク管理
-        </h2>
-        <p className="text-gray-600">
-          あなたのタスクを管理しましょう
-        </p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">タスク管理</h2>
+        <p className="text-gray-600">あなたのタスクを整理しましょう。</p>
       </div>
 
       <TodoForm onSubmit={handleCreateTodo} />
@@ -77,21 +93,21 @@ function TodosContent() {
             size="sm"
             onClick={() => setFilter('all')}
           >
-            すべて ({todos.length})
+            すべて ({counts.total})
           </Button>
           <Button
             variant={filter === 'pending' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('pending')}
           >
-            未完了 ({todos.filter(t => !t.is_done).length})
+            未完了 ({counts.pending})
           </Button>
           <Button
             variant={filter === 'completed' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter('completed')}
           >
-            完了 ({todos.filter(t => t.is_done).length})
+            完了 ({counts.completed})
           </Button>
         </div>
       </div>
@@ -99,15 +115,17 @@ function TodosContent() {
       <div className="space-y-3">
         {filteredTodos.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
-            {filter === 'all' ? 'タスクがありません' : 
-             filter === 'pending' ? '未完了のタスクがありません' : 
-             '完了したタスクがありません'}
+            {filter === 'all'
+              ? 'タスクがありません'
+              : filter === 'pending'
+              ? '未完了のタスクがありません'
+              : '完了したタスクがありません'}
           </div>
         ) : (
           filteredTodos.map((todo) => (
-            <TodoItem 
-              key={todo.id} 
-              todo={todo} 
+            <TodoItem
+              key={todo.id}
+              todo={todo}
               onUpdate={handleUpdateTodo}
               onDelete={handleDeleteTodo}
             />

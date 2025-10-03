@@ -1,25 +1,23 @@
 # ToDoアプリ MVP セットアップガイド
 
 ## 概要
-Next.js 14 + Supabase + TypeScript + Tailwind CSS を使用したToDoアプリのMVPです。
+Next.js 15・Supabase・TypeScript・Tailwind CSS を使用して構築した ToDo アプリの MVP です。
 
 ## 技術スタック
-- **Frontend**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS
 - **Backend**: Supabase (Auth, Postgres, RLS)
 - **State Management**: TanStack Query (React Query)
 - **Validation**: Zod, React Hook Form
 - **UI Components**: shadcn/ui, Radix UI
 
 ## セットアップ手順
-
-### 1. Supabaseプロジェクトの作成
-1. [Supabase](https://supabase.com)にアクセスしてアカウントを作成
+### 1. Supabase プロジェクトを作成
+1. [Supabase](https://supabase.com) にアクセスしてアカウントを作成
 2. 新しいプロジェクトを作成
-3. プロジェクトのURLとAPI Keyを取得
+3. プロジェクトの URL と API キーを取得
 
 ### 2. データベースの設定
-SupabaseのSQL Editorで以下のSQLを実行してください：
-
+Supabase の SQL Editor で以下の SQL を実行してください。
 ```sql
 -- profiles テーブル
 create table if not exists public.profiles (
@@ -44,7 +42,7 @@ create table if not exists public.todos (
 create index if not exists idx_todos_user on public.todos(user_id);
 create index if not exists idx_todos_due on public.todos(due_date);
 
--- RLS (Row Level Security) の有効化
+-- RLS (Row Level Security) を有効化
 alter table public.profiles enable row level security;
 alter table public.todos enable row level security;
 
@@ -81,14 +79,13 @@ on public.todos for delete
 using (auth.uid() = user_id);
 ```
 
-### 3. GitHub OAuth設定
-1. Supabaseの認証設定でGitHubプロバイダを有効化
-2. GitHub OAuth Appを作成（https://github.com/settings/apps ）
-3. Callback URLを設定: `https://your-project.supabase.co/auth/v1/callback`
+### 3. GitHub OAuth 設定
+1. Supabase の Authentication 設定で GitHub プロバイダを有効化
+2. [GitHub 開発者設定](https://github.com/settings/apps) で OAuth App を作成
+3. Callback URL に `https://your-project.supabase.co/auth/v1/callback` を指定
 
 ### 4. 環境変数の設定
-`.env.local`ファイルを作成して以下の内容を設定：
-
+`.env.local` ファイルを作成し、以下を設定します。
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
@@ -101,27 +98,28 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 npm run dev
 ```
 
-## 機能
-- ✅ GitHub認証
-- ✅ Todo一覧表示
-- ✅ Todo追加
-- ✅ Todo編集・削除
-- ✅ Todo完了/未完了の切り替え
-- ✅ 優先度設定（高・中・低）
-- ✅ フィルタリング（すべて・未完了・完了）
-- ✅ レスポンシブデザイン
+## 実装済みの機能
+- GitHub 認証
+- ToDo 一覧表示
+- ToDo の追加
+- ToDo の編集・削除
+- 完了 / 未完了の切り替え
+- 優先度設定（高・中・低）
+- フィルタリング（すべて・未完了・完了）
+- レスポンシブデザイン
 
 ## プロジェクト構造
 ```
-my-app/
+my-todo-app/
 ├── app/
 │   ├── (auth)/
+│   │   ├── api/
+│   │   │   └── auth/
 │   │   └── signin/
 │   ├── (dashboard)/
 │   │   ├── layout.tsx
 │   │   └── todos/
 │   ├── api/
-│   │   ├── auth/
 │   │   └── todos/
 │   └── globals.css
 ├── components/
@@ -141,12 +139,12 @@ my-app/
     └── db.ts
 ```
 
-## 次のステップ（拡張機能）
+## 次のステップ（拡張機能のアイデア）
 - [ ] タグ機能
 - [ ] サブタスク
 - [ ] 並び替え機能
 - [ ] リアルタイム更新
 - [ ] プロフィール管理
 - [ ] ダークモード
-- [ ] テストの追加
-- [ ] CI/CD設定
+- [ ] チャートの追加
+- [ ] CI/CD 設定
